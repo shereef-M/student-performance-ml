@@ -10,6 +10,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_absolute_error, r2_score, accuracy_score, precision_score, recall_score, confusion_matrix
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
 
 df = pd.read_csv("students_perf.csv")
 
@@ -68,6 +70,23 @@ print("Recall (fail):", recall_score(y_test, predictions, pos_label=0))
 
 print("\n--- Classification: k-NN (distance-weighted) ---")
 model = KNeighborsClassifier(n_neighbors=5, weights="distance")
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, predictions))
+print("Precision (fail):", precision_score(y_test, predictions, pos_label=0))
+print("Recall (fail):", recall_score(y_test, predictions, pos_label=0))
+
+
+print("\n--- Classification: SVM (balanced) ---")
+model = SVC(random_state=42, class_weight="balanced")
+model.fit(X_train, y_train)
+predictions = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, predictions))
+print("Precision (fail):", precision_score(y_test, predictions, pos_label=0))
+print("Recall (fail):", recall_score(y_test, predictions, pos_label=0))
+
+print("\n--- Classification: Naive Bayes ---")
+model = GaussianNB()
 model.fit(X_train, y_train)
 predictions = model.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, predictions))
