@@ -13,6 +13,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.cluster import KMeans
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import make_scorer
 
 df = pd.read_csv("students_perf.csv")
 
@@ -101,3 +103,15 @@ cluster_model = KMeans(n_clusters=3, random_state=42)
 df["cluster"] = cluster_model.fit_predict(X_cluster)
 
 print(df.groupby("cluster")[["reading score", "writing score", "passed"]].mean())
+
+
+print("\n--- Cross-Validation: Logistic Regression (5-fold) ---")
+X_cv = df[["reading score", "writing score"]]
+y_cv = df["passed"]
+
+recall_fail_scorer = make_scorer(recall_score, pos_label=0)
+cv_model = LogisticRegression()
+cv_scores = cross_val_score(cv_model, X_cv, y_cv, cv=5, scoring=recall_fail_scorer)
+
+print("Recall per fold:", cv_scores)
+print("Average recall:", cv_scores.mean())
