@@ -12,6 +12,7 @@ from sklearn.metrics import mean_absolute_error, r2_score, accuracy_score, preci
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
+from sklearn.cluster import KMeans
 
 df = pd.read_csv("students_perf.csv")
 
@@ -92,3 +93,11 @@ predictions = model.predict(X_test)
 print("Accuracy:", accuracy_score(y_test, predictions))
 print("Precision (fail):", precision_score(y_test, predictions, pos_label=0))
 print("Recall (fail):", recall_score(y_test, predictions, pos_label=0))
+
+
+print("\n--- Clustering: K-Means (unsupervised) ---")
+X_cluster = df[["reading score", "writing score"]]
+cluster_model = KMeans(n_clusters=3, random_state=42)
+df["cluster"] = cluster_model.fit_predict(X_cluster)
+
+print(df.groupby("cluster")[["reading score", "writing score", "passed"]].mean())
